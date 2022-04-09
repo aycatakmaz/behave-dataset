@@ -19,7 +19,7 @@ from argparse import ArgumentParser
 seq_folder = '/Users/aycatakmaz/Projects/behave-dataset-dataloader/BEHAVE/sequences/Date03_Sub03_boxlarge/t0003.000/'
 depth_path = '/Users/aycatakmaz/Projects/behave-dataset-dataloader/BEHAVE/sequences/Date03_Sub03_boxlarge/t0003.000/k2.depth.png'
 
-
+seq_folder = '/cluster/project/infk/263-5906-00L/data/BEHAVE/sequences/Date01_Sub01_backpack_back'
 
 parser = ArgumentParser()
 parser.add_argument('-s', '--seq_folder', default=seq_folder)
@@ -27,7 +27,7 @@ parser.add_argument('-sn', '--smpl_name', help='smpl fitting save name, for fina
 parser.add_argument('-on', '--obj_name', help='object fitting save name, for final dataset, use fit01', default='fit01')
 parser.add_argument('-fs', '--start', type=int, default=0, help='start from which frame')
 parser.add_argument('-fe', '--end', type=int, default=None, help='ends at which frame')
-parser.add_argument('-v', '--viz_dir', default="/Users/aycatakmaz/Projects/behave-dataset-dataloader/behave-dataset/our_viz_dir", help='path to save you r visualization videos')
+parser.add_argument('-v', '--viz_dir', default="~/behave-dataset/our_viz_dir", help='path to save you r visualization videos')
 parser.add_argument('-vc', '--viz_contact', default=False, action='store_true', help='visualize contact sphere or not')
 
 args = parser.parse_args()

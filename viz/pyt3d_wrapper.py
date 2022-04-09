@@ -28,7 +28,7 @@ class MeshRendererWrapper:
     "a simple wrapper for the pytorch3d mesh renderer"
     def __init__(self, image_size=1200,
                  faces_per_pixel=1,
-                 device='cuda:0',
+                 device='cpu', #cuda:0
                  blur_radius=0, lights=None,
                  materials=None, max_faces_per_bin=50000):
         self.image_size = image_size
@@ -74,7 +74,7 @@ class MeshRendererWrapper:
 
 
 class Pyt3DWrapper:
-    def __init__(self, image_size, device='cuda:0', colors=SMPL_OBJ_COLOR_LIST):
+    def __init__(self, image_size, device='cpu', colors=SMPL_OBJ_COLOR_LIST): #cuda:0
         self.renderer = MeshRendererWrapper(image_size, device=device)
         self.front_camera = self.get_kinect_camera(device)
         self.colors = deepcopy(colors)
@@ -82,7 +82,7 @@ class Pyt3DWrapper:
         self.contact_vizer = ContactVisualizer()
 
     @staticmethod
-    def get_kinect_camera(device='cuda:0'):
+    def get_kinect_camera(device='cpu'): #cuda:0
         R, T = torch.eye(3), torch.zeros(3)
         R[0, 0] = R[1, 1] = -1 # pytorch3d y-axis up, need to rotate to kinect coordinate
         R = R.unsqueeze(0)
