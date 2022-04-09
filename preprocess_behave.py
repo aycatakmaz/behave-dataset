@@ -2,6 +2,9 @@ import os
 import pdb
 import cv2
 import json
+import trimesh
+from plyfile import PlyData, PlyElement
+
 import numpy as np
 import matplotlib.pyplot as plt
 from data.frame_data import FrameDataReader
@@ -117,8 +120,8 @@ for split in splits: #['train', 'val', 'test']
                 
                 pc_filtered, valid_mask, pc = kinect_transform.dmap2pc_shaped(dpt, kid)
                 person_obj_no_intersection_mask = (1-obj_mask*person_mask) #(1536, 2048)
-                updated_valid_mask = valid_mask * person_obj_no_intersection_mask #(1536, 2048) -> (1536, 2048)*(1536, 2048)
-                updated_valid_mask_3D = np.repeat(np.expand_dims(updated_valid_mask,axis=2), 3, axis=2)
+                updated_valid_mask = np.array(valid_mask * person_obj_no_intersection_mask, dtype=bool) #(1536, 2048) -> (1536, 2048)*(1536, 2048)
+                updated_valid_mask_3D = np.array(np.repeat(np.expand_dims(updated_valid_mask,axis=2), 3, axis=2), dtype=bool)
 
                 label_map = np.zeros(dpt.shape)
                 label_map[obj_mask==1]=LABEL2ID_DICT[interaction_obj_type]
@@ -128,7 +131,13 @@ for split in splits: #['train', 'val', 'test']
                 segm_color_map[obj_mask==1]=BEHAVE_COLOR_MAP[LABEL2ID_DICT[interaction_obj_type]]
                 segm_color_map[person_mask==1]=BEHAVE_COLOR_MAP[LABEL2ID_DICT['person']]
                 
-                #pc_out = pc[updated_valid_mask]
+                pc_out = pc[updated_valid_mask]
+                rgb_out = rgb[updated_valid_mask,:]
+                label_out = label_map[updated_valid_mask]
+                segm_color_out = segm_color_map[updated_valid_mask]
+
+                tcp = trimesh.points.PointCloud(pc_out, colors=segm_color_out)
+                tcp.export('temp_res/pc_segm_'+str(id)+'_'+str(kid)+'.ply')
 
                 plt.imsave('temp_res/img_'+str(id)+'_'+str(kid)+'.png', rgb)
                 plt.imsave('temp_res/depth_'+str(id)+'_'+str(kid)+'.png', dpt)
