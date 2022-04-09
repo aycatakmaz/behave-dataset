@@ -8,7 +8,7 @@ import cv2
 from sklearn.neighbors import KDTree
 from scipy.interpolate import RectBivariateSpline
 from scipy import interpolate
-
+import pdb
 
 class KinectCalib:
     def __init__(self, calibration, pc_table):
@@ -86,6 +86,18 @@ class KinectCalib:
         if return_mask:
             return pc, validmask
         return pc
+
+    def dmap2pc_shaped(self, depth):
+        """
+        use precomputed table to convert depth map to point cloud
+        """
+        nanmask = depth == 0
+        d = depth.copy().astype(np.float) / 1000.
+        d[nanmask] = np.nan
+        pc = self.pc_table_ext * d[..., np.newaxis]
+        validmask = np.isfinite(pc[:, :, 0])
+        pc_filtered = pc[validmask]
+        return pc_filtered, validmask, pc
 
     def interpolate_depth(self, depth_im):
         "borrowed from PROX"

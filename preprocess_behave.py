@@ -7,6 +7,38 @@ import matplotlib.pyplot as plt
 from data.frame_data import FrameDataReader
 from data.kinect_transform import KinectTransform
 
+CLASS_LABELS = ('background', 'backpack', 'boxmedium', 'chairwood', 'stool', 'toolbox', 
+                'basketball', 'boxsmall', 'keyboard', 'suitcase', 'trashbin', 
+                'boxlarge', 'boxtiny', 'monitor', 'tablesmall', 'yogaball', 
+                'boxlong', 'chairblack', 'plasticcontainer', 'tablesquare', 'yogamat', 'person')
+
+LABEL2ID_DICT = {val:id for id, val in enumerate(CLASS_LABELS)}
+
+BEHAVE_COLOR_MAP = {
+    0: (0., 0., 0.), #background
+    1: (174., 199., 232.),
+    2: (152., 223., 138.),
+    3: (31., 119., 180.),
+    4: (255., 187., 120.),
+    5: (188., 189., 34.),
+    6: (140., 86., 75.),
+    7: (255., 152., 150.),
+    8: (214., 39., 40.),
+    9: (197., 176., 213.),
+    10: (148., 103., 189.),
+    11: (196., 156., 148.),
+    12: (23., 190., 207.),
+    13: (82., 84., 163.),
+    14: (247., 182., 210.),
+    15: (66., 188., 102.),
+    16: (219., 219., 141.),
+    17: (140., 57., 197.),
+    18: (202., 185., 52.),
+    19: (51., 176., 203.),
+    20: (100., 85., 144.), 
+    21: (149., 0., 58.) #person
+}
+
 dataset_root = '/cluster/project/infk/263-5906-00L/data/BEHAVE'
 calib_root = os.path.join(dataset_root, 'calibs')
 objects_root = os.path.join(dataset_root, 'objects')
@@ -54,76 +86,59 @@ if 'val' not in split_dict.keys():
 for split in splits: #['train', 'val', 'test']
     current_split = split_dict[split]
     current_split_out_dir = processed_data_split_dir_dict[split]
+
     for seq_name in current_split: #'Date01_Sub01_backpack_back'
         seq_path = os.path.join(sequences_root, seq_name)
-        #seq_name_parts = seq_name.split('_') #['Date01', 'Sub01', 'backpack', 'back']
-        #date_name, sub_name, action_name = seq_name_parts[0], seq_name_parts[1], '_'.join(seq_name_parts[2:]) #'Date01', 'Sub01', 'backpack_back'
-        #current_calib_dir = os.path.join(calib_root, date_name)
-
         reader = FrameDataReader(seq_path)
         kinect_transform = KinectTransform(seq_path, kinect_count=reader.kinect_count)
-        #pdb.set_trace()
 
         seq_end = reader.cvt_end(None)
         loop = range(0, seq_end)
    
         for id in loop:
             # get all color images in this frame
-            #pdb.set_trace()
             kids = [0, 1, 2, 3] # choose which kinect id to visualize
             imgs_all = reader.get_color_images(id, reader.kids)
-            depths_all = reader.get_depth_images(id, reader.kids)
+            depths_all = reader.get_depth_images(id, reader.kids) #depth values are in milimeters
 
             imgs_resize = [cv2.resize(x, (w, h)) for x in imgs_all]
             depths_resize = [cv2.resize(x, (w, h)) for x in depths_all]
-            selected_imgs = [imgs_resize[x] for x in kids] # selected views among 4 views
 
-            for orig, kid in zip(selected_imgs, kids):
-                h, w = orig.shape[:2]
-            
-            # load person and object mask
-            res = []
             for kid, rgb, dpt in zip(kids, imgs_all, depths_all):
                 print('ID, kID:', id, kid)
+                frame_folder_id = reader.get_frame_folder(id)
+                interaction_obj_type = reader.seq_info.get_obj_name()
+
+                person_mask = reader.get_mask(id, kid, 'person', ret_bool=True)
+                obj_mask = reader.get_mask(id, kid, 'obj', ret_bool=True)
+                if obj_mask is None:
+                    #obj_mask=np.ones(dpt)
+                    continue
+                
+                pc_filtered, valid_mask, pc = kinect_transform.dmap2pc_shaped(dpt, kid)
+                person_obj_no_intersection_mask = (1-obj_mask*person_mask) #(1536, 2048)
+                updated_valid_mask = valid_mask * person_obj_no_intersection_mask #(1536, 2048) -> (1536, 2048)*(1536, 2048)
+                updated_valid_mask_3D = np.repeat(np.expand_dims(updated_valid_mask,axis=2), 3, axis=2)
+
+                label_map = np.zeros(dpt.shape)
+                label_map[obj_mask==1]=LABEL2ID_DICT[interaction_obj_type]
+                label_map[person_mask==1]=LABEL2ID_DICT['person']
+
+                segm_color_map = np.zeros(rgb.shape)
+                segm_color_map[obj_mask==1]=BEHAVE_COLOR_MAP[LABEL2ID_DICT[interaction_obj_type]]
+                segm_color_map[person_mask==1]=BEHAVE_COLOR_MAP[LABEL2ID_DICT['person']]
+                
+                #pc_out = pc[updated_valid_mask]
+
                 plt.imsave('temp_res/img_'+str(id)+'_'+str(kid)+'.png', rgb)
                 plt.imsave('temp_res/depth_'+str(id)+'_'+str(kid)+'.png', dpt)
-
-                obj_mask = np.zeros_like(rgb).astype(np.uint8)
-                mask = reader.get_mask(id, kid, 'obj', ret_bool=True)
-                if mask is None:
-                    continue # mask can be None if there is not fitting in this frame
-                obj_mask[mask] = np.array([255, 0, 0])
                 plt.imsave('temp_res/obj_mask_'+str(id)+'_'+str(kid)+'.png', obj_mask)
-            
-                person_mask = np.zeros_like(rgb).astype(np.uint8)
-                mask = reader.get_mask(id, kid, 'person', ret_bool=True)
-                person_mask[mask] = np.array([255, 0, 0])
                 plt.imsave('temp_res/person_mask_'+str(id)+'_'+str(kid)+'.png', person_mask)
+                plt.imsave('temp_res/person_obj_mask_intersection_'+str(id)+'_'+str(kid)+'.png', obj_mask*person_mask)
+                plt.imsave('temp_res/val_depth_'+str(id)+'_'+str(kid)+'.png', dpt*updated_valid_mask)
+                plt.imsave('temp_res/full_segm_'+str(id)+'_'+str(kid)+'.png', segm_color_map/255.0)
+                plt.imsave('temp_res/valid_segm_'+str(id)+'_'+str(kid)+'.png', updated_valid_mask_3D*(segm_color_map/255.0))
 
-                comb = np.concatenate([rgb, person_mask, obj_mask], 1)
-                ch, cw = comb.shape[:2]
-                res.append(cv2.resize(comb, (cw//3, ch//3)))
+                
                 pdb.set_trace()
             
-
-            # load person and object pc, return psbody.Mesh
-            # convert flag is used to be compatible with detectron2 classes, in detectron2 all chairs are clasified as chair,
-            # so the chair pc is saved in subfolder chair; also all yogaball, basketball are classified as 'sports ball',
-            # obj_pc = reader.get_pc(i, 'obj', convert=True)
-            # person_pc = reader.get_pc(i, 'person')
-
-            # load person and object mask
-            # for kid, rgb, writer in zip(kids, imgs_all, video_writers):
-            #     obj_mask = np.zeros_like(rgb).astype(np.uint8)
-            #     mask = reader.get_mask(i, kid, 'obj', ret_bool=True)
-            #     if mask is None:
-            #         continue # mask can be None if there is not fitting in this frame
-            #     obj_mask[mask] = np.array([255, 0, 0])
-            #
-            #     person_mask = np.zeros_like(rgb).astype(np.uint8)
-            #     mask = reader.get_mask(i, kid, 'person', ret_bool=True)
-            #     person_mask[mask] = np.array([255, 0, 0])
-            #
-            #     comb = np.concatenate([rgb, person_mask, obj_mask], 1)
-            #     ch, cw = comb.shape[:2]
-            #     writer.append_data(cv2.resize(comb, (cw//3, ch//3)))

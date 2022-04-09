@@ -59,7 +59,7 @@ class KinectFrameReader:
         " return the i-th frame of color and depth images"
         frame_folder = join(self.seq_path, self.frames[idx])
         color_files = [join(frame_folder, f'k{k}.color.{self.ext}') for k in range(self.kinect_count)]
-        depth_files = [join(frame_folder, f'k{k}.depth.png') for k in range(self.kinect_count)]
+        depth_files = [join(frame_folder, f'k{k}.depth.png') for k in range(self.kinect_count)] #depth values are in milimeters
 
         colors = [Image.open(c).convert('RGB') for c in color_files]
         colors = [np.array(c) for c in colors]

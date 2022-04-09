@@ -77,6 +77,11 @@ class KinectTransform:
         pc = kinect.dmap2pc(depth)
         return pc
 
+    def dmap2pc_shaped(self, depth, kid):
+        kinect = self.intrinsics[kid]
+        pc = kinect.dmap2pc_shaped(depth)
+        return pc
+
 
 
 

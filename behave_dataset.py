@@ -10,14 +10,14 @@ import pdb
 import json
 from utils import read_txt
 
-CLASS_LABELS = ('backpack', 'boxmedium', 'chairwood', 'stool', 'toolbox', 
+CLASS_LABELS = ('background', 'backpack', 'boxmedium', 'chairwood', 'stool', 'toolbox', 
                 'basketball', 'boxsmall', 'keyboard', 'suitcase', 'trashbin', 
                 'boxlarge', 'boxtiny', 'monitor', 'tablesmall', 'yogaball', 
-                'boxlong', 'chairblack', 'plasticcontainer', 'tablesquare', 'yogamat', 'person', 'others')
-VALID_CLASS_IDS = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
+                'boxlong', 'chairblack', 'plasticcontainer', 'tablesquare', 'yogamat', 'person')
+VALID_CLASS_IDS = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21)
 
 BEHAVE_COLOR_MAP = {
-    0: (0., 0., 0.),
+    0: (0., 0., 0.), #background
     1: (174., 199., 232.),
     2: (152., 223., 138.),
     3: (31., 119., 180.),
@@ -37,8 +37,8 @@ BEHAVE_COLOR_MAP = {
     17: (140., 57., 197.),
     18: (202., 185., 52.),
     19: (51., 176., 203.),
-    20: (149., 0., 58.), #person
-    21: (100., 85., 144.), #others
+    20: (100., 85., 144.), 
+    21: (149., 0., 58.) #person
 }
 
 from enum import Enum
