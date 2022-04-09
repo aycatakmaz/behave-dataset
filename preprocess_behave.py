@@ -3,6 +3,7 @@ import pdb
 import cv2
 import json
 import numpy as np
+import matplotlib.pyplot as plt
 from data.frame_data import FrameDataReader
 from data.kinect_transform import KinectTransform
 
@@ -11,8 +12,10 @@ calib_root = os.path.join(dataset_root, 'calibs')
 objects_root = os.path.join(dataset_root, 'objects')
 sequences_root = os.path.join(dataset_root, 'sequences')
 
-image_size = 640
-w, h = image_size, int(image_size * 0.75)
+#image_size = 640
+#w, h = image_size, int(image_size * 0.75)
+
+w, h = 1536, 2048
 
 splits = ['train', 'val', 'test']
 #split_dict_path = '/cluster/project/infk/263-5906-00L/data/BEHAVE/split.json'
@@ -59,40 +62,48 @@ for split in splits: #['train', 'val', 'test']
 
         reader = FrameDataReader(seq_path)
         kinect_transform = KinectTransform(seq_path, kinect_count=reader.kinect_count)
-        pdb.set_trace()
+        #pdb.set_trace()
 
         seq_end = reader.cvt_end(None)
         loop = range(0, seq_end)
    
         for id in loop:
             # get all color images in this frame
+            #pdb.set_trace()
             kids = [0, 1, 2, 3] # choose which kinect id to visualize
             imgs_all = reader.get_color_images(id, reader.kids)
             depths_all = reader.get_depth_images(id, reader.kids)
 
             imgs_resize = [cv2.resize(x, (w, h)) for x in imgs_all]
             depths_resize = [cv2.resize(x, (w, h)) for x in depths_all]
+            selected_imgs = [imgs_resize[x] for x in kids] # selected views among 4 views
 
-            selected_imgs = [imgs_resize[x] for x in kids] # here we render fitting in all 4 views
             for orig, kid in zip(selected_imgs, kids):
                 h, w = orig.shape[:2]
             
             # load person and object mask
             res = []
-            for kid, rgb in zip(kids, imgs_all):
+            for kid, rgb, dpt in zip(kids, imgs_all, depths_all):
+                print('ID, kID:', id, kid)
+                plt.imsave('temp_res/img_'+str(id)+'_'+str(kid)+'.png', rgb)
+                plt.imsave('temp_res/depth_'+str(id)+'_'+str(kid)+'.png', dpt)
+
                 obj_mask = np.zeros_like(rgb).astype(np.uint8)
-                mask = reader.get_mask(i, kid, 'obj', ret_bool=True)
+                mask = reader.get_mask(id, kid, 'obj', ret_bool=True)
                 if mask is None:
                     continue # mask can be None if there is not fitting in this frame
                 obj_mask[mask] = np.array([255, 0, 0])
+                plt.imsave('temp_res/obj_mask_'+str(id)+'_'+str(kid)+'.png', obj_mask)
             
                 person_mask = np.zeros_like(rgb).astype(np.uint8)
-                mask = reader.get_mask(i, kid, 'person', ret_bool=True)
+                mask = reader.get_mask(id, kid, 'person', ret_bool=True)
                 person_mask[mask] = np.array([255, 0, 0])
-            
+                plt.imsave('temp_res/person_mask_'+str(id)+'_'+str(kid)+'.png', person_mask)
+
                 comb = np.concatenate([rgb, person_mask, obj_mask], 1)
                 ch, cw = comb.shape[:2]
                 res.append(cv2.resize(comb, (cw//3, ch//3)))
+                pdb.set_trace()
             
 
             # load person and object pc, return psbody.Mesh
