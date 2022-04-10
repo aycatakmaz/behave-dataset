@@ -2,6 +2,7 @@ import os
 import pdb
 import cv2
 import json
+import time
 import trimesh
 from plyfile import PlyData, PlyElement
 
@@ -44,9 +45,8 @@ BEHAVE_COLOR_MAP = {
 }
 
 dataset_root = '/cluster/project/infk/263-5906-00L/data/BEHAVE'
-calib_root = os.path.join(dataset_root, 'calibs')
-objects_root = os.path.join(dataset_root, 'objects')
 sequences_root = os.path.join(dataset_root, 'sequences')
+print('[INFO] Original dataset root:', dataset_root)
 
 w, h = 1536, 2048
 SAMPLE_KEEP_RATE = 0.20 # for downsampling the point cloud, we will keep SAMPLE_KEEP_RATE percent of the points for each scene
@@ -56,6 +56,7 @@ splits = ['train', 'val', 'test']
 #split_dict_path = '/cluster/project/infk/263-5906-00L/data/BEHAVE/split.json'
 split_dict_path = 'split_trainvaltest.json'
 processed_data_out_dir = '/cluster/scratch/takmaza/VirtualHumans/behave_preprocessed'
+print('[INFO] Processed data will be saved to:', processed_data_out_dir)
 
 if not os.path.exists(processed_data_out_dir):
     os.makedirs(processed_data_out_dir)
@@ -67,7 +68,9 @@ for key, val in processed_data_split_dir_dict.items():
 
 with open(split_dict_path, 'r') as file:
     split_dict = json.load(file)
+
 if 'val' not in split_dict.keys():
+    print('[INFO] Split dict does not have the val split! Working on the issue...')
     np.random.seed(42)
     train_paths = split_dict['train'] #231 sequences -> 0.72
     test_paths = split_dict['test'] #90 sequences -> 0.28
@@ -84,22 +87,29 @@ if 'val' not in split_dict.keys():
         with open(split_write_root, 'w') as file:
             new_split_dict = {'train':new_train_paths, 'val':new_val_paths, 'test':test_paths}
             json.dump(new_split_dict, file, indent=2)
-            print('Saved new split dict with train/val/test to ' + split_write_root)
+            print('[INFO] Saved new split dict with train/val/test to ' + split_write_root)
+else:
+    print('[INFO] Successfully loaded the train/val/test split from ' + split_dict_path)
 
 
+overall_time_start = time.time()
 for split in splits: #['train', 'val', 'test']
     current_split = split_dict[split]
     current_split_out_dir = processed_data_split_dir_dict[split]
-
+    counter = 0
     for seq_name in current_split: #'Date01_Sub01_backpack_back'
+        break
+        current_seq_out_dir = os.path.join(current_split_out_dir, seq_name)
         seq_path = os.path.join(sequences_root, seq_name)
         reader = FrameDataReader(seq_path)
         kinect_transform = KinectTransform(seq_path, kinect_count=reader.kinect_count)
 
         seq_end = reader.cvt_end(None)
         loop = range(0, seq_end)
-   
+        interaction_obj_type = reader.seq_info.get_obj_name()
+
         for id in loop:
+            break
             # get all color images in this frame
             kids = [0, 1, 2, 3] # choose which kinect id to visualize
             imgs_all = reader.get_color_images(id, reader.kids)
@@ -108,15 +118,24 @@ for split in splits: #['train', 'val', 'test']
             imgs_resize = [cv2.resize(x, (w, h)) for x in imgs_all]
             depths_resize = [cv2.resize(x, (w, h)) for x in depths_all]
 
-            for kid, rgb, dpt in zip(kids, imgs_all, depths_all):
-                print('ID, kID:', id, kid)
-                frame_folder_id = reader.get_frame_folder(id)
-                interaction_obj_type = reader.seq_info.get_obj_name()
+            frame_folder_id = reader.get_frame_folder(id).split('/')[-1]
+            current_frame_folder_out_dir = os.path.join(current_seq_out_dir, frame_folder_id)
+            if not os.path.exists(current_frame_folder_out_dir):
+                os.makedirs(current_frame_folder_out_dir)
 
+            for kid, rgb, dpt in zip(kids, imgs_all, depths_all):
+                break
+                current_frame_out_ply_path = os.path.join(current_frame_folder_out_dir, 'k_'+str(kid)+'.ply')
+                if os.path.exists(current_frame_out_ply_path):
+                    print('[INFO] Skipped ' + current_frame_out_ply_path + ' - already exists!')
+                    counter += 1
+                    continue
+                start=time.time()
                 person_mask = reader.get_mask(id, kid, 'person', ret_bool=True)
                 obj_mask = reader.get_mask(id, kid, 'obj', ret_bool=True)
                 if obj_mask is None:
-                    #obj_mask=np.ones(dpt)
+                    print('[INFO] Skipped ' + current_frame_out_ply_path + ' - there is no object mask!')
+                    counter += 1
                     continue
                 
                 pc_filtered, valid_mask, pc = kinect_transform.dmap2pc_shaped(dpt, kid)
@@ -143,34 +162,24 @@ for split in splits: #['train', 'val', 'test']
                 segm_rgb_out = segm_color_map[updated_valid_mask][idx_points_low_res, :]
                 label_out = label_map[updated_valid_mask][idx_points_low_res]
                 
-                #pdb.set_trace()
-
-                tcp = trimesh.points.PointCloud(pc_out, colors=segm_rgb_out)
-                tcp.export('temp_res/pc_segm_'+str(id)+'_'+str(kid)+'.ply')
-
-                plt.imsave('temp_res/img_'+str(id)+'_'+str(kid)+'.png', rgb)
-                plt.imsave('temp_res/depth_'+str(id)+'_'+str(kid)+'.png', dpt)
-                plt.imsave('temp_res/obj_mask_'+str(id)+'_'+str(kid)+'.png', obj_mask)
-                plt.imsave('temp_res/person_mask_'+str(id)+'_'+str(kid)+'.png', person_mask)
-                plt.imsave('temp_res/person_obj_mask_intersection_'+str(id)+'_'+str(kid)+'.png', obj_mask*person_mask)
-                plt.imsave('temp_res/val_depth_'+str(id)+'_'+str(kid)+'.png', dpt*updated_valid_mask)
-                plt.imsave('temp_res/full_segm_'+str(id)+'_'+str(kid)+'.png', segm_color_map/255.0)
-                plt.imsave('temp_res/valid_segm_'+str(id)+'_'+str(kid)+'.png', updated_valid_mask_3D*(segm_color_map/255.0))
-                
+                # saving the ply
                 points_3d = np.zeros((pc_out.shape[0], 10))
                 points_3d[:,0:3] = pc_out
                 points_3d[:,3:6] = rgb_out
                 points_3d[:,6:9] = segm_rgb_out
                 points_3d[:,9] = label_out
-                filename = 'temp_res/sampled_pc_rgb_segmrgb_lbl_'+str(int(SAMPLE_KEEP_RATE*100))+'_'+str(id)+'_'+str(kid)+ '.ply'
-                save_point_cloud_w_segm(points_3d, filename, binary=True, verbose=True)
 
-                new_points_3d = np.zeros((pc_out.shape[0], 7))
-                new_points_3d[:,0:3] = pc_out
-                new_points_3d[:,3:6] = rgb_out
-                new_points_3d[:,6] = label_out
-                new_filename = 'temp_res/sampled_pc_rgb_lbl_'+str(int(SAMPLE_KEEP_RATE*100))+'_'+str(id)+'_'+str(kid)+ '.ply'
-                save_point_cloud(new_points_3d, new_filename, binary=True, with_label=True, verbose=True)
-
-                pdb.set_trace()
-            
+                ply_path_verbose_bool = True if counter%200==0 else False
+                save_point_cloud_w_segm(points_3d, current_frame_out_ply_path, binary=True, verbose=ply_path_verbose_bool)
+                end=time.time()
+                if ply_path_verbose_bool: 
+                    print('[INFO] Processed the frame in ' + str((end-start)) + ' seconds.')
+                counter += 1
+        print('[INFO] Sequence ' + seq_name + ' processed. Total frame count since the split started: ', str(counter))
+    print('[INFO] Split ' + split + ' processed. Total frame count in the split:',  str(counter))
+overall_time_end = time.time()
+print('[INFO] Processing complete! Processed files can be found in', processed_data_out_dir)
+overall_time = overall_time_end-overall_time_start
+overall_min = int(overall_time//60)
+overall_rem_sec = int(overall_time%60)
+print('[INFO] Processing took', str(overall_min) ,'minutes', str(overall_rem_sec), 'seconds.')
