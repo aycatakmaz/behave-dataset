@@ -1,3 +1,4 @@
+#bsub -n 1 -W 24:00 -o log_preprocess_full_dataset -R "rusage[mem=2G]"  python preprocess_behave_full_dataset.py
 import os
 import pdb
 import cv2
@@ -50,7 +51,11 @@ print('[INFO] Original dataset root:', dataset_root)
 
 w, h = 1536, 2048
 SAMPLE_KEEP_RATE = 0.20 # for downsampling the point cloud, we will keep SAMPLE_KEEP_RATE percent of the points for each scene
-np.random.seed(42)
+seed = 42
+np.random.seed(seed)
+print('[INFO] w:', w, 'h:', h)
+print('[INFO] SAMPLE_KEEP_RATE:', SAMPLE_KEEP_RATE)
+print('[INFO] np.random.seed(' + str(seed) + ')')
 
 splits = ['train', 'val', 'test']
 #split_dict_path = '/cluster/project/infk/263-5906-00L/data/BEHAVE/split.json'
@@ -171,7 +176,7 @@ for split in splits: #['train', 'val', 'test']
                 points_3d[:,6:9] = segm_rgb_out
                 points_3d[:,9] = label_out
 
-                ply_path_verbose_bool = True if counter%200==0 else False
+                ply_path_verbose_bool = True if counter%100==0 else False
                 save_point_cloud_w_segm(points_3d, current_frame_out_ply_path, binary=True, verbose=ply_path_verbose_bool)
                 end=time.time()
                 if ply_path_verbose_bool: 
