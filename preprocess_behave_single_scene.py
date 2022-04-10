@@ -52,6 +52,8 @@ sequences_root = os.path.join(dataset_root, 'sequences')
 #w, h = image_size, int(image_size * 0.75)
 
 w, h = 1536, 2048
+SAMPLE_KEEP_RATE = 0.20 # for downsampling the point cloud, we will keep SAMPLE_KEEP_RATE percent of the points for each scene
+np.random.seed(42)
 
 splits = ['train', 'val', 'test']
 #split_dict_path = '/cluster/project/infk/263-5906-00L/data/BEHAVE/split.json'
@@ -86,6 +88,7 @@ if 'val' not in split_dict.keys():
             new_split_dict = {'train':new_train_paths, 'val':new_val_paths, 'test':test_paths}
             json.dump(new_split_dict, file, indent=2)
             print('Saved new split dict with train/val/test to ' + split_write_root)
+
 
 for split in splits: #['train', 'val', 'test']
     current_split = split_dict[split]
@@ -123,7 +126,7 @@ for split in splits: #['train', 'val', 'test']
                 person_obj_no_intersection_mask = (1-obj_mask*person_mask) #(1536, 2048)
                 updated_valid_mask = np.array(valid_mask * person_obj_no_intersection_mask, dtype=bool) #(1536, 2048) -> (1536, 2048)*(1536, 2048)
                 updated_valid_mask_3D = np.array(np.repeat(np.expand_dims(updated_valid_mask,axis=2), 3, axis=2), dtype=bool)
-
+                
                 label_map = np.zeros(dpt.shape)
                 label_map[obj_mask==1]=LABEL2ID_DICT[interaction_obj_type]
                 label_map[person_mask==1]=LABEL2ID_DICT['person']
@@ -132,10 +135,18 @@ for split in splits: #['train', 'val', 'test']
                 segm_color_map[obj_mask==1]=BEHAVE_COLOR_MAP[LABEL2ID_DICT[interaction_obj_type]]
                 segm_color_map[person_mask==1]=BEHAVE_COLOR_MAP[LABEL2ID_DICT['person']]
                 
-                pc_out = pc[updated_valid_mask]
-                rgb_out = rgb[updated_valid_mask,:]
-                segm_rgb_out = segm_color_map[updated_valid_mask]
-                label_out = label_map[updated_valid_mask]
+                # sampling points
+                num_points = updated_valid_mask.sum()
+                num_points_low_res = int(num_points * SAMPLE_KEEP_RATE)
+                idx_points_low_res = np.random.choice(updated_valid_mask.sum(), num_points_low_res)
+
+                # taking the sampled subset of the masked input
+                pc_out = pc[updated_valid_mask][idx_points_low_res, :]
+                rgb_out = rgb[updated_valid_mask,:][idx_points_low_res, :]
+                segm_rgb_out = segm_color_map[updated_valid_mask][idx_points_low_res, :]
+                label_out = label_map[updated_valid_mask][idx_points_low_res]
+                
+                #pdb.set_trace()
 
                 tcp = trimesh.points.PointCloud(pc_out, colors=segm_rgb_out)
                 tcp.export('temp_res/pc_segm_'+str(id)+'_'+str(kid)+'.ply')
@@ -154,14 +165,14 @@ for split in splits: #['train', 'val', 'test']
                 points_3d[:,3:6] = rgb_out
                 points_3d[:,6:9] = segm_rgb_out
                 points_3d[:,9] = label_out
-                filename = 'temp_res/full_pc_rgb_segmrgb_lbl.ply'
+                filename = 'temp_res/sampled_pc_rgb_segmrgb_lbl_'+str(int(SAMPLE_KEEP_RATE*100))+'_'+str(id)+'_'+str(kid)+ '.ply'
                 save_point_cloud_w_segm(points_3d, filename, binary=True, verbose=True)
 
                 new_points_3d = np.zeros((pc_out.shape[0], 7))
                 new_points_3d[:,0:3] = pc_out
                 new_points_3d[:,3:6] = rgb_out
                 new_points_3d[:,6] = label_out
-                new_filename = 'temp_res/full_pc_rgb_lbl.ply'
+                new_filename = 'temp_res/sampled_pc_rgb_lbl_'+str(int(SAMPLE_KEEP_RATE*100))+'_'+str(id)+'_'+str(kid)+ '.ply'
                 save_point_cloud(new_points_3d, new_filename, binary=True, with_label=True, verbose=True)
 
                 pdb.set_trace()
