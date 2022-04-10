@@ -88,9 +88,14 @@ if 'val' not in split_dict.keys():
             new_split_dict = {'train':new_train_paths, 'val':new_val_paths, 'test':test_paths}
             json.dump(new_split_dict, file, indent=2)
             print('[INFO] Saved new split dict with train/val/test to ' + split_write_root)
+    split_dict = new_split_dict
 else:
     print('[INFO] Successfully loaded the train/val/test split from ' + split_dict_path)
 
+preprocessed_dataset_split_backup_path = os.path.join(processed_data_out_dir, 'split_trainvaltest.json')
+with open(preprocessed_dataset_split_backup_path, 'w') as file:
+    json.dump(split_dict, file, indent=2)
+    print('[INFO] Created a backup of the split dict with train/val/test at ' + preprocessed_dataset_split_backup_path)
 
 overall_time_start = time.time()
 for split in splits: #['train', 'val', 'test']
