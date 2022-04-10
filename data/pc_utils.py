@@ -1,5 +1,7 @@
 import numpy as np
 from plyfile import PlyData, PlyElement
+import pdb
+import pandas as pd
 
 def read_plyfile(filepath):
   """Read ply file and return it as numpy array. Returns None if emtpy."""
@@ -7,7 +9,6 @@ def read_plyfile(filepath):
     plydata = PlyData.read(f)
   if plydata.elements:
     return pd.DataFrame(plydata.elements[0].data).values
-
 
 def save_point_cloud(points_3d, filename, binary=True, with_label=False, verbose=True):
   """Save an RGB point cloud as a PLY file.

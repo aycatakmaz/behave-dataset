@@ -148,7 +148,6 @@ for split in splits: #['train', 'val', 'test']
                 plt.imsave('temp_res/val_depth_'+str(id)+'_'+str(kid)+'.png', dpt*updated_valid_mask)
                 plt.imsave('temp_res/full_segm_'+str(id)+'_'+str(kid)+'.png', segm_color_map/255.0)
                 plt.imsave('temp_res/valid_segm_'+str(id)+'_'+str(kid)+'.png', updated_valid_mask_3D*(segm_color_map/255.0))
-
                 
                 points_3d = np.zeros((pc_out.shape[0], 10))
                 points_3d[:,0:3] = pc_out
