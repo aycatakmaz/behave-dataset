@@ -98,7 +98,6 @@ for split in splits: #['train', 'val', 'test']
     current_split_out_dir = processed_data_split_dir_dict[split]
     counter = 0
     for seq_name in current_split: #'Date01_Sub01_backpack_back'
-        break
         current_seq_out_dir = os.path.join(current_split_out_dir, seq_name)
         seq_path = os.path.join(sequences_root, seq_name)
         reader = FrameDataReader(seq_path)
@@ -109,7 +108,6 @@ for split in splits: #['train', 'val', 'test']
         interaction_obj_type = reader.seq_info.get_obj_name()
 
         for id in loop:
-            break
             # get all color images in this frame
             kids = [0, 1, 2, 3] # choose which kinect id to visualize
             imgs_all = reader.get_color_images(id, reader.kids)
@@ -124,7 +122,6 @@ for split in splits: #['train', 'val', 'test']
                 os.makedirs(current_frame_folder_out_dir)
 
             for kid, rgb, dpt in zip(kids, imgs_all, depths_all):
-                break
                 current_frame_out_ply_path = os.path.join(current_frame_folder_out_dir, 'k_'+str(kid)+'.ply')
                 if os.path.exists(current_frame_out_ply_path):
                     print('[INFO] Skipped ' + current_frame_out_ply_path + ' - already exists!')
@@ -155,7 +152,7 @@ for split in splits: #['train', 'val', 'test']
                 num_points = updated_valid_mask.sum()
                 num_points_low_res = int(num_points * SAMPLE_KEEP_RATE)
                 idx_points_low_res = np.random.choice(updated_valid_mask.sum(), num_points_low_res)
-
+                
                 # taking the sampled subset of the masked input
                 pc_out = pc[updated_valid_mask][idx_points_low_res, :]
                 rgb_out = rgb[updated_valid_mask,:][idx_points_low_res, :]
