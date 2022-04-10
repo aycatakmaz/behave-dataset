@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from data.frame_data import FrameDataReader
 from data.kinect_transform import KinectTransform
+from data.pc_utils import save_point_cloud, save_point_cloud_w_segm
 
 CLASS_LABELS = ('background', 'backpack', 'boxmedium', 'chairwood', 'stool', 'toolbox', 
                 'basketball', 'boxsmall', 'keyboard', 'suitcase', 'trashbin', 
@@ -133,10 +134,10 @@ for split in splits: #['train', 'val', 'test']
                 
                 pc_out = pc[updated_valid_mask]
                 rgb_out = rgb[updated_valid_mask,:]
+                segm_rgb_out = segm_color_map[updated_valid_mask]
                 label_out = label_map[updated_valid_mask]
-                segm_color_out = segm_color_map[updated_valid_mask]
 
-                tcp = trimesh.points.PointCloud(pc_out, colors=segm_color_out)
+                tcp = trimesh.points.PointCloud(pc_out, colors=segm_rgb_out)
                 tcp.export('temp_res/pc_segm_'+str(id)+'_'+str(kid)+'.ply')
 
                 plt.imsave('temp_res/img_'+str(id)+'_'+str(kid)+'.png', rgb)
@@ -149,5 +150,20 @@ for split in splits: #['train', 'val', 'test']
                 plt.imsave('temp_res/valid_segm_'+str(id)+'_'+str(kid)+'.png', updated_valid_mask_3D*(segm_color_map/255.0))
 
                 
+                points_3d = np.zeros((pc_out.shape[0], 10))
+                points_3d[:,0:3] = pc_out
+                points_3d[:,3:6] = rgb_out
+                points_3d[:,6:9] = segm_rgb_out
+                points_3d[:,9] = label_out
+                filename = 'temp_res/full_pc_rgb_segmrgb_lbl.ply'
+                save_point_cloud_w_segm(points_3d, filename, binary=True, verbose=True)
+
+                new_points_3d = np.zeros((pc_out.shape[0], 7))
+                new_points_3d[:,0:3] = pc_out
+                new_points_3d[:,3:6] = rgb_out
+                new_points_3d[:,6] = label_out
+                new_filename = 'temp_res/full_pc_rgb_lbl.ply'
+                save_point_cloud(new_points_3d, new_filename, binary=True, with_label=True, verbose=True)
+
                 pdb.set_trace()
             
