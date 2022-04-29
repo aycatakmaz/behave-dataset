@@ -1,0 +1,323 @@
+Sender: LSF System <lsfadmin@eu-g1-008-4>
+Subject: Job 212904537: </cluster/home/takmaza/run_code_server.sh> in cluster <euler> Exited
+
+Job </cluster/home/takmaza/run_code_server.sh> was submitted from host <eu-login-14> by user <takmaza> in cluster <euler> at Sat Apr  9 23:32:29 2022
+Job was executed on host(s) <3*eu-g1-008-4>, in queue <normal.120h>, as user <takmaza> in cluster <euler> at Sat Apr  9 23:32:55 2022
+</cluster/home/takmaza> was used as the home directory.
+</cluster/home/takmaza/behave-dataset> was used as the working directory.
+Started at Sat Apr  9 23:32:55 2022
+Terminated at Thu Apr 14 23:32:48 2022
+Results reported at Thu Apr 14 23:32:48 2022
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+/cluster/home/takmaza/run_code_server.sh
+------------------------------------------------------------
+
+TERM_RUNLIMIT: job killed after reaching LSF run time limit.
+Exited with exit code 140.
+
+Resource usage summary:
+
+    CPU time :                                   1936.00 sec.
+    Max Memory :                                 15031 MB
+    Average Memory :                             1656.62 MB
+    Total Requested Memory :                     12288.00 MB
+    Delta Memory :                               -2743.00 MB
+    Max Swap :                                   -
+    Max Processes :                              21
+    Max Threads :                                157
+    Run time :                                   432017 sec.
+    Turnaround time :                            432019 sec.
+
+The output (if any) follows:
+
+[2022-04-09T21:32:57.666Z] info  code-server 3.9.3 fe2dc2deb08e378069891b622bb62ad1d261d1b1
+[2022-04-09T21:32:57.668Z] info  Using user-data-dir ~/.local/share/code-server
+[2022-04-09T21:32:57.681Z] info  Using config file ~/.config/code-server/config.yaml
+[2022-04-09T21:32:57.681Z] info  HTTP server listening on http://10.205.107.31:49740 
+[2022-04-09T21:32:57.681Z] info    - Authentication is enabled
+[2022-04-09T21:32:57.681Z] info      - Using password from ~/.config/code-server/config.yaml
+[2022-04-09T21:32:57.681Z] info    - Not serving HTTPS 
+[2022-04-09T21:35:01.510Z] error vscode is not running Error: vscode is not running
+    at VscodeProvider.send (/cluster/apps/nss/gcc-6.3.0/code-server/3.9.3/x86_64/out/node/vscode.js:206:19)
+    at VscodeProvider.<anonymous> (/cluster/apps/nss/gcc-6.3.0/code-server/3.9.3/x86_64/out/node/vscode.js:198:30)
+    at step (/cluster/apps/nss/gcc-6.3.0/code-server/3.9.3/x86_64/out/node/vscode.js:63:23)
+    at Object.next (/cluster/apps/nss/gcc-6.3.0/code-server/3.9.3/x86_64/out/node/vscode.js:44:53)
+    at fulfilled (/cluster/apps/nss/gcc-6.3.0/code-server/3.9.3/x86_64/out/node/vscode.js:35:58)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+events.js:291
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: write EPIPE
+    at WriteWrap.onWriteComplete [as oncomplete] (internal/stream_base_commons.js:94:16)
+Emitted 'error' event on Socket instance at:
+    at errorOrDestroy (internal/streams/destroy.js:108:12)
+    at onwriteError (_stream_writable.js:424:5)
+    at onwrite (_stream_writable.js:445:5)
+    at internal/streams/destroy.js:50:7
+    at Socket._destroy (net.js:680:5)
+    at Socket.destroy (internal/streams/destroy.js:38:8)
+    at WriteWrap.onWriteComplete [as oncomplete] (internal/stream_base_commons.js:95:12) {
+  errno: 'EPIPE',
+  code: 'EPIPE',
+  syscall: 'write'
+}
+[2022-04-09T21:46:09.089Z] error VS Code exited unexpectedly with code 1
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+events.js:291
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: write EPIPE
+    at WriteWrap.onWriteComplete [as oncomplete] (internal/stream_base_commons.js:94:16)
+Emitted 'error' event on Socket instance at:
+    at errorOrDestroy (internal/streams/destroy.js:108:12)
+    at onwriteError (_stream_writable.js:424:5)
+    at onwrite (_stream_writable.js:445:5)
+    at internal/streams/destroy.js:50:7
+    at Socket._destroy (net.js:680:5)
+    at Socket.destroy (internal/streams/destroy.js:38:8)
+    at WriteWrap.onWriteComplete [as oncomplete] (internal/stream_base_commons.js:95:12) {
+  errno: 'EPIPE',
+  code: 'EPIPE',
+  syscall: 'write'
+}
+[2022-04-10T06:36:07.430Z] error VS Code exited unexpectedly with code 1
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+[2022-04-11T16:10:55.175Z] warn  vscode Socket is closed
+[2022-04-11T16:11:02.048Z] warn  vscode Socket is closed
+[2022-04-11T16:11:03.057Z] warn  vscode Socket is closed
+[2022-04-11T16:11:05.008Z] warn  vscode Socket is closed
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/seg'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/seg'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/s'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/s'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/se'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/se'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/segm'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/segm'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/segme'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/segme'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/s'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/s'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/se'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/se'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/seg'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/seg'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/segm'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/segm'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/segme'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/segme'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/segmen'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/segmen'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/segment'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/segment'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/segments'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/segments'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/t'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/t'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/ta'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/ta'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/tak'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/tak'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/takm'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/takm'
+}
+[node.js fs] readdir with filetypes failed with error:  [Error: EACCES: permission denied, scandir '/cluster/home/takma'] {
+  errno: -13,
+  code: 'EACCES',
+  syscall: 'scandir',
+  path: '/cluster/home/takma'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+[2022-04-14T14:18:16.416Z] warn  vscode Socket is closed
+[2022-04-14T14:18:16.477Z] warn  vscode Socket is closed
+User defined signal 2
