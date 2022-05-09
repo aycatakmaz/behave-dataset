@@ -57,13 +57,13 @@ print('[INFO] w:', w, 'h:', h)
 print('[INFO] SAMPLE_KEEP_RATE:', SAMPLE_KEEP_RATE)
 print('[INFO] np.random.seed(' + str(seed) + ')')
 
-splits = ['train', 'val', 'test']
+#splits = ['train', 'val', 'test']
 #splits = ['val']
-#splits = ['test']
+splits = ['test']
 
 #split_dict_path = '/cluster/project/infk/263-5906-00L/data/BEHAVE/split.json'
 split_dict_path = 'split_trainvaltest.json'
-processed_data_out_dir = '/cluster/scratch/takmaza/VirtualHumans/behave_preprocessed'
+processed_data_out_dir = '/cluster/scratch/takmaza/VirtualHumans/behave_preprocessed_new'
 print('[INFO] Processed data will be saved to:', processed_data_out_dir)
 
 if not os.path.exists(processed_data_out_dir):

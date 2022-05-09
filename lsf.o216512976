@@ -1,0 +1,56 @@
+Sender: LSF System <lsfadmin@eu-g1-005-2>
+Subject: Job 216512976: </cluster/home/takmaza/run_code_server.sh> in cluster <euler> Exited
+
+Job </cluster/home/takmaza/run_code_server.sh> was submitted from host <eu-login-42> by user <takmaza> in cluster <euler> at Fri Apr 29 13:45:52 2022
+Job was executed on host(s) <3*eu-g1-005-2>, in queue <normal.120h>, as user <takmaza> in cluster <euler> at Fri Apr 29 13:46:09 2022
+</cluster/home/takmaza> was used as the home directory.
+</cluster/home/takmaza/behave-dataset> was used as the working directory.
+Started at Fri Apr 29 13:46:09 2022
+Terminated at Wed May  4 13:45:48 2022
+Results reported at Wed May  4 13:45:48 2022
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+/cluster/home/takmaza/run_code_server.sh
+------------------------------------------------------------
+
+TERM_RUNLIMIT: job killed after reaching LSF run time limit.
+Exited with exit code 140.
+
+Resource usage summary:
+
+    CPU time :                                   440.00 sec.
+    Max Memory :                                 361 MB
+    Average Memory :                             245.36 MB
+    Total Requested Memory :                     12288.00 MB
+    Delta Memory :                               11927.00 MB
+    Max Swap :                                   -
+    Max Processes :                              11
+    Max Threads :                                68
+    Run time :                                   432003 sec.
+    Turnaround time :                            431996 sec.
+
+The output (if any) follows:
+
+[2022-04-29T11:46:12.558Z] info  code-server 3.9.3 fe2dc2deb08e378069891b622bb62ad1d261d1b1
+[2022-04-29T11:46:12.560Z] info  Using user-data-dir ~/.local/share/code-server
+[2022-04-29T11:46:12.574Z] info  Using config file ~/.config/code-server/config.yaml
+[2022-04-29T11:46:12.575Z] info  HTTP server listening on http://10.205.107.17:62852 
+[2022-04-29T11:46:12.575Z] info    - Authentication is enabled
+[2022-04-29T11:46:12.575Z] info      - Using password from ~/.config/code-server/config.yaml
+[2022-04-29T11:46:12.575Z] info    - Not serving HTTPS 
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+  ERR /cluster/home/takmaza/.local/share/code-server/extensions [Error: ENOENT: no such file or directory, scandir '/cluster/home/takmaza/.local/share/code-server/extensions'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'scandir',
+  path: '/cluster/home/takmaza/.local/share/code-server/extensions'
+}
+User defined signal 2
